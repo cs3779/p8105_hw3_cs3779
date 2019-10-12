@@ -2,11 +2,10 @@
 title: "Homework 3"
 author: "CJ Snyder"
 date: "10/10/2019"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(viridis)
 knitr::opts_chunk$set(
@@ -24,5 +23,18 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
+
+# Uploading Dataset
+```{r, results='hide'}
+library(p8105.datasets)
+data ("instacart")
+
+instacart
 ```
+
+The instacart dataset includes `r nrow(instacart)` observations, along with `r ncol(instacart)` variables including: `r names(instacart)`. 
+
+Each item within an order is linked together using a particular _order_id_ and _product_id_, and includes information like when the order was made (*order_dow*, and *order_hour_of_day*), as well as where the item is located within the store (*`r names(instacart) [12:15]`*) and whether or not this item is being re-ordered (*reordered*). 
+
+
 
