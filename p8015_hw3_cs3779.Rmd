@@ -32,6 +32,7 @@ data ("instacart")
 instacart
 ```
 
+## **Dataset Description:**
 The instacart dataset includes `r nrow(instacart)` observations, along with `r ncol(instacart)` variables including: `r names(instacart)`. 
 
 Each item within an order is linked together using a particular _order_id_ and _product_id_, and includes information like when the order was made (*order_dow*, and *order_hour_of_day*), as well as where the item is located within the store (*`r names(instacart) [12:15]`*) and whether or not this item is being re-ordered (*reordered*). 
@@ -44,5 +45,41 @@ instacart %>%
     scale_y_continuous(labels=scales::comma) +
     theme(axis.text.x = element_text(size=12,angle=90))
 ```
+
+The largest number of orders occured on Sunday according to the below chart:
+```{r, echo=FALSE}
+instacart %>% 
+  ggplot(aes(x=order_dow)) + geom_bar(stat="count") +
+    labs(x="Day of the Week", y="Amount Ordered") +
+    scale_y_continuous(labels=scales::comma) +
+    scale_x_continuous(
+      breaks = c(0,1,2,3,4,5,6),
+      labels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) +
+    theme(axis.text.x = element_text(size=12))
+```
+
+```{r, echo=FALSE}
+aisle_count = 
+  instacart %>% 
+  group_by(aisle) %>% 
+  count() %>% 
+  arrange(desc(n)) 
+```
+
+The total number of aisles collected by _Instacart_ is `r summarize(instacart, count=n_distinct(aisle_id))`. The aisle that had the most items ordered from it was **`r aisle_count[1,]`** with *`r aisle_count[1,1]`* items bought, followed closely by `r aisle_count[2,]` with *`r aisle_count[2,2]`* items bought. 
+
+This aisles that had over 10,000 items bought from them are shown in the below chart (organized from most to least):
+```{r, echo=FALSE}
+aisle_count %>% 
+  filter(n>10000) %>% 
+  ggplot(aes(x=reorder(aisle,desc(n)),y=n)) + 
+    geom_col() +
+    labs(x="Aisle where Item was Located", y="Amount Ordered") +
+    scale_y_continuous(labels=scales::comma) +
+    theme(axis.text.x = element_text(size=11,angle=90))
+```
+
+
+
 
 
