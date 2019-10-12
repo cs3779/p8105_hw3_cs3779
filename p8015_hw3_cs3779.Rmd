@@ -36,5 +36,13 @@ The instacart dataset includes `r nrow(instacart)` observations, along with `r n
 
 Each item within an order is linked together using a particular _order_id_ and _product_id_, and includes information like when the order was made (*order_dow*, and *order_hour_of_day*), as well as where the item is located within the store (*`r names(instacart) [12:15]`*) and whether or not this item is being re-ordered (*reordered*). 
 
+The amount of items ordered from each department is summarized in the below bar chart:
+```{r, echo=FALSE}
+instacart %>% 
+  ggplot(aes(x=department)) + geom_bar(stat="count") +
+    labs(x="Department where Item was Located", y="Amount Ordered") +
+    scale_y_continuous(labels=scales::comma) +
+    theme(axis.text.x = element_text(size=12,angle=90))
+```
 
 
