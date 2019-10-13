@@ -68,7 +68,7 @@ aisle_count =
 
 The total number of aisles collected by _Instacart_ is `r summarize(instacart, count=n_distinct(aisle_id))`. The aisle that had the most items ordered from it was **`r aisle_count[1,1]`** with *`r aisle_count[1,2]`* items bought, followed closely by **`r aisle_count[2,1]`** with *`r aisle_count[2,2]`* items bought. 
 
-This aisles that had over 10,000 items bought from them are shown in the below plot (organized from most to least):
+The aisles that had over 10,000 items bought from them are shown in the below plot (organized from most to least):
 ```{r, echo=FALSE, eval=FALSE}
 aisle_count %>% 
   filter(n>10000) %>% 
@@ -105,8 +105,33 @@ aisle_table =
          "Prodcut ID" = product_id,
          "Product Name" = product_name)
 
-aisle_table
+print(aisle_table)
 ```
 
+The mean hour of the day in which _Pink Lady Apples_ and _Coffee Ice Cream_ are ordered throughout the week are listed in the table below:
+```{r, echo=FALSE}
+mean_hour_df = 
+  instacart %>% 
+  group_by(product_name, order_dow) %>%
+  mutate(
+    mean_hour = mean(order_hour_of_day)) %>% 
+  filter(product_name %in% c("Pink Lady Apples",
+                             "Coffee Ice Cream")) %>% 
+  select(product_name, order_dow, mean_hour) %>% 
+  distinct(mean_hour) %>% 
+  ungroup(order_dow) %>% 
+  mutate(
+    order_dow = as.character(order_dow),
+    order_dow = factor(order_dow, c(0, 1, 2, 3, 4, 5, 6), 
+                       labels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+  )
+mean_hour_df = 
+  mean_hour_df[order(mean_hour_df$order_dow), ] %>% 
+  pivot_wider(
+    names_from = order_dow,
+    values_from = mean_hour
+  ) 
+print(mean_hour_df)
+```
 
 
