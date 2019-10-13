@@ -66,10 +66,10 @@ aisle_count =
   arrange(desc(n)) 
 ```
 
-The total number of aisles collected by _Instacart_ is `r summarize(instacart, count=n_distinct(aisle_id))`. The aisle that had the most items ordered from it was **`r aisle_count[1,]`** with *`r aisle_count[1,1]`* items bought, followed closely by `r aisle_count[2,]` with *`r aisle_count[2,2]`* items bought. 
+The total number of aisles collected by _Instacart_ is `r summarize(instacart, count=n_distinct(aisle_id))`. The aisle that had the most items ordered from it was **`r aisle_count[1,1]`** with *`r aisle_count[1,2]`* items bought, followed closely by **`r aisle_count[2,1]`** with *`r aisle_count[2,2]`* items bought. 
 
-This aisles that had over 10,000 items bought from them are shown in the below chart (organized from most to least):
-```{r, echo=FALSE}
+This aisles that had over 10,000 items bought from them are shown in the below plot (organized from most to least):
+```{r, echo=FALSE, eval=FALSE}
 aisle_count %>% 
   filter(n>10000) %>% 
   ggplot(aes(x=reorder(aisle,desc(n)),y=n)) + 
@@ -79,7 +79,34 @@ aisle_count %>%
     theme(axis.text.x = element_text(size=11,angle=90))
 ```
 
+```{r, echo=FALSE}
+aisle_count %>% 
+  filter(n>10000) %>% 
+  ggplot(aes(x=reorder(aisle,desc(n)),y=n)) + 
+    geom_point() +
+    labs(x="Aisle where Item was Located", y="Amount Ordered") +
+    scale_y_continuous(labels=scales::comma) +
+    theme(axis.text.x = element_text(size=11,angle=90))
+```
 
+The three most popular items bought from aisles labeled as _"baking ingredients"_, _"dog food care"_, and _"packaged vegetables fruits"_ are as follows:
+```{r, echo=FALSE}
+aisle_table = 
+  instacart %>% 
+  group_by(aisle, product_id, product_name) %>% 
+  summarize(count_prod = n()) %>% 
+  filter(aisle %in% c("baking ingredients",
+                      "dog food care",
+                      "packaged vegetables fruits")) %>% 
+  group_by(aisle) %>% 
+  top_n(3, count_prod) %>% 
+  rename("Aisle" = aisle,
+         "Amount Bought" = count_prod,
+         "Prodcut ID" = product_id,
+         "Product Name" = product_name)
+
+aisle_table
+```
 
 
 
