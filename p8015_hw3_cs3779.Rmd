@@ -7,6 +7,7 @@ output: github_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(knitr)
 library(viridis)
 library(data.table)
 library(patchwork)
@@ -106,7 +107,7 @@ aisle_table =
          "Prodcut ID" = product_id,
          "Product Name" = product_name)
 
-print(aisle_table)
+kable(aisle_table)
 ```
 
 For "baking ingredients", the three most bought items include _Pure Baking Soda_, _Light Brown Sugar_, and _Cane Sugar_. For "dog food care", they include _Snack Sticks Chicken & Rice Recipe Dog Treats_, _Small Dog Biscuits_, and _Organix Chicken & Brown Rice Recipe_. For "packaged vegetables fruits", they include _Organic Baby Spinach_, _Organic Raspberries_, and _Organic Blueberries_.
@@ -134,7 +135,8 @@ mean_hour_df =
     names_from = order_dow,
     values_from = mean_hour
   ) 
-print(mean_hour_df)
+
+kable(mean_hour_df)
 ```
 
 According to the above table, it seems as thought "Pink Lady Apples" are purchased the earliest on Monday, and the latest on Wednesday. Meanwhile, "Coffee Ice Cream" is purchased the earliest on Friday, and the latest on Tuesday.
@@ -177,7 +179,7 @@ brfss_2002 =
     ) %>% 
   filter(unique_location>=7)
 
-print(brfss_2002)
+kable(brfss_2002)
 ```
 In 2002, the states that had 7 or more locations from which the government collected data include Connecticut, Florida, Massachusetts, North Carolina, New Jersey, and Pennsylvania
 
@@ -191,7 +193,7 @@ brfss_2010 =
     ) %>% 
   filter(unique_location>=7)
 
-print(brfss_2010)
+kable(brfss_2010)
 ```
 While in 2010, the stats that had 7 or more locations from which the government collected data include California, Colorodo, Florida, Massachusetts, Maryland, North Carolina, Nebraska, New Jersey, New York, Ohio, Pennsylvania, South Carolina, Texas and Washington.
 
@@ -294,7 +296,7 @@ accel_df_table =
          "Weekday/Weekend" = dow,
          "Total Activity" = total_activity)
 
-print(accel_df_table, n = Inf)
+kable(accel_df_table)
 ```
 
 Looking at the table of total activity over the 35 days data was collected on the subject, there was overall more activity at the beginning of observation, which diminished over time. The amount of activity seems to be fairly consistent throughout the week, but then the amount of activity from Friday to Monday drastically shifts from a lot to very little.
