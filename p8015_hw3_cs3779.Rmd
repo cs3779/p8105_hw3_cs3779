@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(viridis)
+library(patchwork)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -146,7 +147,7 @@ brfss_smart2010
 ```
 
 ## Data Cleaning for _brfss_smar2010_ dataset:
-```{r}
+```{r, echo=FALSE}
 names(brfss_smart2010)[] <- tolower(names(brfss_smart2010)[])
 
 brfss_smart2010 %>% 
@@ -222,8 +223,7 @@ brfss_excel_df %>%
 Overall the average "data value" seems to be decreasing over time (from 2002 - 2010) for all participating states. Over the span of this time frame, there seems to be large variability in the average "data value" for some states. However, there seems to be a trend over this range of time that indicates that West Viginia seems to have the lowest overall data value, while Washington D.C.s seems to have the greatest overall value.
 
 ### Question 2c
-#### 2006 Dataset for NY State Locations
-```{r}
+```{r, fig.show='hide'}
 ny_plot_2006 = 
   brfss_smart2010 %>% 
   filter(year=="2006",
@@ -231,16 +231,12 @@ ny_plot_2006 =
   ggplot(aes(x=locationdesc, y=data_value, group=response, color=response)) +
   geom_point() +
   labs(
+    title = "NY State 2006 BRFSS Data",
     x = "Data Collection Locations",
     y = "Data Value"
   )
 ny_plot_2006
-```
 
-In 2006, the data value for any given "poor" response-type seemed very similar across locations. This can also be seen with any given "fair" response-type. However, when looking at "good" and "excellent" response-types, there seems to be some variability about how they are classified. For example, in all locations except for _New York County_ the "good" response type had a high data value than the "excellent" response-type. And the difference between these two responses also varried greatly, with _Kings County_ having the greatest difference, while for _Westchester County_ the values are practically the same.
-
-#### 2010 Dataset for NY State Locations
-```{r}
 ny_plot_2010 = 
   brfss_smart2010 %>% 
   filter(year=="2010",
@@ -248,6 +244,7 @@ ny_plot_2010 =
   ggplot(aes(x=locationdesc, y=data_value, group=response, color=response)) +
   geom_point() +
   labs(
+    title = "NY State 2010 BRFSS Data",
     x = "Data Collection Locations",
     y = "Data Value"
   ) +
@@ -255,14 +252,50 @@ ny_plot_2010 =
 ny_plot_2010
 ```
 
+#### 2006 & 2010 Distribution of Response-Type Data Value by NY State Location
+```{r}
+(ny_plot_2006) / (ny_plot_2010)
+```
+
+In 2006, the data value for any given "poor" response-type seemed very similar across locations. This can also be seen with any given "fair" response-type. However, when looking at "good" and "excellent" response-types, there seems to be some variability about how they are classified. For example, in all locations except for _New York County_ the "good" response type had a high data value than the "excellent" response-type. And the difference between these two responses also varried greatly, with _Kings County_ having the greatest difference, while for _Westchester County_ the values are practically the same.
+
 Similarly to the 2006 dataset, the 2010 dataset still retains the same pattern of similar data value for "poor" and "fair" response-types across the various NY-state data collection locations. It is impotant to note that there are 3 additional locations that were established by 2010, including: _Bronx County_, _Erie County_, and _Monroe County_. In addition to _New York County_, now _Monroe County_, and _Westchester County_ have it so that their "excellent" response-type have a greater value than their "good" response-types. Also, instead of _Kings County_, it now appears that _Bronx County_ has the greatest difference between its "good" and "excellent" response-type data values.
 
 # **Problem 3 - Uploading the _Accelerometer_ Dataset:**
-```{r}
+```{r, results='hide'}
+accel_df = read_csv(file="./data/accel_data.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    day = as.character(day),
+    dow = factor(day, c("Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"), labels=c("Weekend", "Weekend", "Weekday", "Weekday", "Weekday", "Weekday", "Weekday"))
+  )
+accel_df[,4:1443] <- sapply(accel_df[, c(4:1443)], as.integer)
+```
+The _accel_df_ contains `r nrow(accel_df)` observations with `r ncol(accel_df)` variables. The majority of the varibales are activity counts for each minute of the day (starting at midnight, or 12 A.M.), or a total of 1,440 minutes per day. Each row represents a specific day of the week for the 7 total weeks data was colleceted on the subject (i.e. 35 totals rows).
 
+## Total Activity for Each Day
+```{r, results='hide'}
+accel_df = 
+  accel_df %>%
+  mutate(
+    total_activity = select(., 4:1443) %>% apply(1, sum, na.rm=TRUE)
+  ) 
+```
+ 
+```{r}
+accel_df_table =
+  accel_df %>% 
+  select(week, day_id, day, dow, total_activity) %>% 
+  rename("Week" = week,
+         "Day ID" = day_id,
+         "Day of the Week" = day,
+         "Weekday/Weekend" = dow,
+         "Total Activity" = total_activity)
+
+print(accel_df_table, n = Inf)
 ```
 
-
+Looking at the table of total activity over the 35 days data was collected on the subject, there seems to be a trend towards less activity during the Weekend compared to during the Weekday.
 
 
 
